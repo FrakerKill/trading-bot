@@ -1,1 +1,1 @@
-# tarding-bot
+# trading-bot
