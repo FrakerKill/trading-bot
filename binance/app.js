@@ -140,6 +140,7 @@ function canNotifyTelegram(from) {
 
 function _notifyTelegram(price, from) {
     moment.locale('es')
+    const orders = store.get('orders')
     if (process.env.NOTIFY_TELEGRAM
         && canNotifyTelegram(from))
         NotifyTelegram({
@@ -153,7 +154,7 @@ function _notifyTelegram(price, from) {
             gridProfits: parseFloat(store.get('profits')).toFixed(4),
             realProfits: getRealProfits(price),
             start: moment(store.get('start_time')).format('DD/MM/YYYY HH:mm'),
-            openorders: (store.get('orders')).length,
+            openorders: orders.length,
             from
         })
 }
@@ -386,7 +387,7 @@ async function broadcast() {
                 log(`Prev price: ${startPrice} ${MARKET2}`)
                 log(`Next Buy price: ${startPrice * (100 - (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.length)))) / 100 } ${MARKET2}`)
                 log(`Percent: ${100 - (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.length))) / 100 }`)
-                log(`Open Orders: ${(store.get('orders')).length}`)
+                log(`Open Orders: ${orders.length}`)
 
                 if (marketPrice < startPrice) {
                     var factor = (startPrice - marketPrice)
