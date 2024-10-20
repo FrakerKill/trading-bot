@@ -14,6 +14,7 @@ __Precio ${data.market1}:__ ${data.price}\\
 __Saldo ${data.market1}:__ ${data.balance1}\\
 __Saldo ${data.market2}:__ ${parseFloat(data.balance2).toFixed(2)}\\
 __Profits:__ ${parseFloat(data.realProfits).toFixed(2)} ${data.market2} ${data.market2 < 0 ? '🔻' : '↗'}\\
+__Orden Compra:__ ${parseFloat(data.openorders)}\\
     `).replace(/\./g, '\\.')
 
     try {
