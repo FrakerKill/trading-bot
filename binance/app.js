@@ -15,7 +15,6 @@ const INCREMENTAL_VOLATILITY = process.argv[6]
 const ENTRY_PRICE_MANUAL = process.argv[7]
 
 const store = new Storage(`./data/${MARKET}.json`)
-const orders = new Storage(`./data/orders${MARKET}.json`)
 const sleep = (timeMs) => new Promise(resolve => setTimeout(resolve, timeMs))
 
 function elapsedTime() {
@@ -38,6 +37,7 @@ async function _updateBalances() {
 }
 
 async function _calculateProfits() {
+    const orders = store.get('orders')
     const sold = orders.filter(order => {
         return order.status === 'sold'
     })
@@ -88,6 +88,7 @@ async function getFees({ commission, commissionAsset }) {
 
 async function _buy(price, amount) {
     if (parseFloat(store.get(`${MARKET2.toLowerCase()}_balance`)) >= BUY_ORDER_AMOUNT) {
+        var orders = store.get('orders')
         var sellFactor = (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.length))) * price / 100
         var slFactor = process.env.STOP_LOSS_GRID * price / 100
 
@@ -139,6 +140,7 @@ function canNotifyTelegram(from) {
 
 function _notifyTelegram(price, from) {
     moment.locale('es')
+    const orders = store.get('orders')
     if (process.env.NOTIFY_TELEGRAM
         && canNotifyTelegram(from))
         NotifyTelegram({
@@ -233,12 +235,14 @@ async function _closeBot() {
 
 function getOrderId() {
     const fifoStrategy = process.env.STOP_LOSS_GRID_IS_FIFO
+    const orders = store.get('orders')
     const index = fifoStrategy ? 0 : orders.length - 1
 
-    return orders[index].id
+    return store.get('orders')[index].id
 }
 
 function getToSold(price, changeStatus) {
+    const orders = store.get('orders')
     const toSold = []
 
     for (var i = 0; i < orders.length; i++) {
@@ -260,6 +264,7 @@ function getToSold(price, changeStatus) {
 }
 
 async function _sell(price) {
+    const orders = store.get('orders')
     const toSold = getToSold(price, true)
 
     if (toSold.length > 0) {
@@ -329,19 +334,18 @@ async function broadcast() {
 
                 console.clear()
                 log(`Running Time: ${elapsedTime()}`)
-
-                var exec = require('child_process').exec;
-                exec('vcgencmd measure_temp',
-                    function (error, stdout, stderr) {
-                        log('stdout: ' + stdout);
-                        log('stderr: ' + stderr);
-                        if (error !== null) {
-                             log('exec error: ' + error);
-                        }
-                    });
-
                 log('===========================================================')
                 const totalProfits = getRealProfits(marketPrice)
+
+                var exec = require('child_process').exec
+                exec('vcgencmd measure_temp',
+                    function (error, stdout, stderr) {
+                        log('stdout: ' + stdout)
+                        log('stderr: ' + stderr)
+                        if (error !== null) {
+                             log('exec error: ' + error)
+                        }
+                    })
 
                 if (!isNaN(totalProfits)) {
                     const totalProfitsPercent = parseFloat(
@@ -389,6 +393,7 @@ async function broadcast() {
                 log(`Entry price: ${store.get('entry_price')} ${MARKET2} (${entryPercent <= 0 ? '' : '+'}${entryPercent}%)`)
                 log('===========================================================')
 
+                const orders = store.get('orders')
                 log(`Prev price: ${startPrice} ${MARKET2}`)
                 log(`Next Buy price: ${startPrice * (100 - (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.length)))) / 100 } ${MARKET2}`)
                 log(`Percent: ${100 - (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.length))) / 100 }`)
@@ -522,6 +527,7 @@ async function init() {
         store.put('start_time', startTime)
         const price = await getPrice(MARKET)
         store.put('start_price', price)
+        store.put('orders', [])
         store.put('profits', 0)
         store.put('sl_losses', 0)
         store.put('withdrawal_profits', 0)
