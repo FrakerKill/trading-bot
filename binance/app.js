@@ -384,6 +384,7 @@ async function broadcast() {
                 log('===========================================================')
 
                 const orders = store.get('orders')
+                const initialBalance2 = parseFloat(store.get(`initial_${MARKET2.toLowerCase()}_balance`))
                 log(`Prev price: ${startPrice} ${MARKET2}`)
                 log(`Next Buy price: ${startPrice * (100 - (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.length)))) / 100 } ${MARKET2}`)
                 log(`Percent: ${100 - (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.length))) / 100 }`)
