@@ -1,6 +1,5 @@
 require('dotenv').config()
-const Storage1 = require('node-storage')
-const Storage2 = require('node-storage')
+const Storage = require('node-storage')
 const fs = require('fs')
 const moment = require('moment')
 const { log, logColor, colors } = require('./utils/logger')
@@ -15,8 +14,8 @@ const BS_PERCENT = process.argv[5]
 const INCREMENTAL_VOLATILITY = process.argv[6]
 const ENTRY_PRICE_MANUAL = process.argv[7]
 
-const store = new Storage1(`./data/${MARKET}.json`)
-const orders = new Storage2(`./data/orders${MARKET}.json`)
+const store = new Storage(`./data/${MARKET}.json`)
+const orders = new Storage(`./data/orders${MARKET}.json`)
 const sleep = (timeMs) => new Promise(resolve => setTimeout(resolve, timeMs))
 
 function elapsedTime() {
@@ -389,11 +388,12 @@ async function broadcast() {
                 const entryPercent = parseFloat(100 * entryFactor / entryPrice).toFixed(2)
                 log(`Entry price: ${store.get('entry_price')} ${MARKET2} (${entryPercent <= 0 ? '' : '+'}${entryPercent}%)`)
                 log('===========================================================')
+
                 log(`Prev price: ${startPrice} ${MARKET2}`)
-                log(`Next Buy price: ${startPrice * (100 - (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.split(/\r\n|\r|\n/).length)))) / 100 } ${MARKET2}`)
-                log(`Percent: ${100 - (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.split(/\r\n|\r|\n/).length))) / 100 }`)
+                log(`Next Buy price: ${startPrice * (100 - (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.length)))) / 100 } ${MARKET2}`)
+                log(`Percent: ${100 - (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.length))) / 100 }`)
                 log(`Minimum price order: ${startPrice * (100 - (parseFloat(BS_PERCENT) * (initialBalance2 / BUY_ORDER_AMOUNT))) / 100 }`)
-                log(`Open Orders: ${orders.split(/\r\n|\r|\n/).length}`)
+                log(`Open Orders: ${orders.length}`)
 
                 if (marketPrice < startPrice) {
                     var factor = (startPrice - marketPrice)
