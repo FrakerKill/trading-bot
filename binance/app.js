@@ -329,6 +329,17 @@ async function broadcast() {
 
                 console.clear()
                 log(`Running Time: ${elapsedTime()}`)
+
+                var exec = require('child_process').exec;
+                exec('vcgencmd measure_temp',
+                    function (error, stdout, stderr) {
+                        log('stdout: ' + stdout);
+                        log('stderr: ' + stderr);
+                        if (error !== null) {
+                             log('exec error: ' + error);
+                        }
+                    });
+
                 log('===========================================================')
                 const totalProfits = getRealProfits(marketPrice)
 
