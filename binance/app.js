@@ -389,6 +389,7 @@ async function broadcast() {
                 log(`Next Buy price: ${startPrice * (100 - (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.length)))) / 100 } ${MARKET2}`)
                 log(`Percent: ${100 - (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.length))) / 100 }`)
                 log(`Minimum price order: ${startPrice * (100 - (parseFloat(BS_PERCENT) * (initialBalance2 / parseFloat(BUY_ORDER_AMOUNT)))) / 100 }`)
+                log(`Minimum Percent: ${100 - (parseFloat(BS_PERCENT) * (initialBalance2 / parseFloat(BUY_ORDER_AMOUNT))) / 100 }`)
                 log(`Open Orders: ${orders.length}`)
 
                 if (marketPrice < startPrice) {
