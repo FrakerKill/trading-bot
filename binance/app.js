@@ -8,11 +8,11 @@ const { NotifyTelegram } = require('./services/TelegramNotify')
 
 const MARKET1 = process.argv[2]
 const MARKET2 = process.argv[3]
-const MARKET = MARKET1 + MARKET2
-const BUY_ORDER_AMOUNT = process.argv[4]
-const BS_PERCENT = process.argv[5]
-const INCREMENTAL_VOLATILITY = process.argv[6]
-const ENTRY_PRICE_MANUAL = process.argv[7]
+const MARKET = process.argv[4]
+const BUY_ORDER_AMOUNT = process.argv[5]
+const BS_PERCENT = process.argv[6]
+const INCREMENTAL_VOLATILITY = process.argv[7]
+const ENTRY_PRICE_MANUAL = process.argv[8]
 
 const store = new Storage(`./data/${MARKET}.json`)
 const sleep = (timeMs) => new Promise(resolve => setTimeout(resolve, timeMs))
