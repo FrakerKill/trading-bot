@@ -337,16 +337,6 @@ async function broadcast() {
                 log('===========================================================')
                 const totalProfits = getRealProfits(marketPrice)
 
-                var exec = require('child_process').exec
-                exec('vcgencmd measure_temp',
-                    function (error, stdout, stderr) {
-                        log('stdout: ' + stdout)
-                        log('stderr: ' + stderr)
-                        if (error !== null) {
-                             log('exec error: ' + error)
-                        }
-                    })
-
                 if (!isNaN(totalProfits)) {
                     const totalProfitsPercent = parseFloat(
                         100 * totalProfits / store.get(`initial_${MARKET2.toLowerCase()}_balance`)
