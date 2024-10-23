@@ -18,11 +18,11 @@ const store = new Storage(`./data/${MARKET}.json`)
 const sleep = (timeMs) => new Promise(resolve => setTimeout(resolve, timeMs))
 
 function elapsedTime() {
-    const diff = Date.now() - store.get('start_time'); // Tiempo transcurrido en milisegundos
+    const diff = Date() - store.get('start_time'); // Tiempo transcurrido en milisegundos
     const diffDays = Math.floor(diff / 86400000); // Días completos transcurridos
 
     const daysFormatted = diffDays > 0 ? diffDays + 'd ' : ''; // Añadir 'd' si hay días
-    const timeFormatted = moment.utc(diff).format('HH:mm:ss'); // Formato de horas, minutos, segundos
+    const timeFormatted = moment(diff).format('HH:mm:ss'); // Formato de horas, minutos, segundos
 
     return daysFormatted + timeFormatted;
 }
@@ -517,7 +517,7 @@ async function init() {
         log('Iniciando bot...')
         if (process.env.SELL_ALL_ON_START)
             await clearStart()
-        const startTime = Date.now()
+        const startTime = Date()
         store.put('start_time', startTime)
         const price = await getPrice(MARKET)
         store.put('start_price', price)
