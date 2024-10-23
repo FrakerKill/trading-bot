@@ -153,10 +153,11 @@ function canNotifyTelegram(from) {
 function _notifyTelegram(price, from) {
     moment.locale('es')
     const orders = store.get('orders')
+    const resultado = elapsedTimeAndDays()
     if (process.env.NOTIFY_TELEGRAM
         && canNotifyTelegram(from))
         NotifyTelegram({
-            runningTime: elapsedTimeAndDays(),
+            runningTime: resultado.days + resultado.time,
             market: MARKET,
             market1: MARKET1,
             market2: MARKET2,
