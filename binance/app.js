@@ -344,6 +344,7 @@ async function broadcast() {
             if (mPrice) {
                 const startPrice = store.get('start_price')
                 const marketPrice = mPrice
+                const orders = store.get('orders')
 
                 console.clear()
                 const resultado = elapsedTimeAndDays();
@@ -358,8 +359,6 @@ async function broadcast() {
                     log(`Withdrawal profits: ${parseFloat(store.get('withdrawal_profits')).toFixed(2)} ${MARKET2}`)
                     logColor(totalProfits < 0 ? colors.red : totalProfits == 0 ? colors.gray : colors.green,
                         `Real Profits [SL = ${process.env.STOP_LOSS_BOT}%, TP = ${process.env.TAKE_PROFIT_BOT}%]: ${totalProfitsPercent}% ==> ${totalProfits <= 0 ? '' : '+'}${parseFloat(totalProfits).toFixed(3)} ${MARKET2}`)
-
-                    const orders = store.get('orders')
 
                     if (totalProfitsPercent >= parseFloat(process.env.TAKE_PROFIT_BOT) || (parseFloat(resultado.days) > 1 && orders.length === 0)) {
                         logColor(colors.green, 'Cerrando bot en ganancias....')
