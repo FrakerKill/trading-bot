@@ -156,7 +156,7 @@ function _notifyTelegram(price, from) {
     if (process.env.NOTIFY_TELEGRAM
         && canNotifyTelegram(from))
         NotifyTelegram({
-            runningTime: elapsedTime(),
+            runningTime: elapsedTimeAndDays(),
             market: MARKET,
             market1: MARKET1,
             market2: MARKET2,
