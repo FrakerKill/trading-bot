@@ -348,7 +348,7 @@ async function broadcast() {
 
                 console.clear()
                 const resultado = elapsedTimeAndDays();
-                log(`Running Time: ${resultado.days} + ${resultado.time}`)
+                log(`Running Time: ${resultado.days} ${resultado.time}`)
                 log('===========================================================')
                 const totalProfits = getRealProfits(marketPrice)
 
