@@ -18,10 +18,13 @@ const store = new Storage(`./data/${MARKET}.json`)
 const sleep = (timeMs) => new Promise(resolve => setTimeout(resolve, timeMs))
 
 function elapsedTime() {
-    const diff = Date.now() - store.get('start_time')
-    var diffDays = diff / 86400000
-    diffDays = diffDays < 1 ? '' : diffDays
-    return diffDays + '' + moment.utc(diff).format('HH:mm:ss')
+    const diff = Date.now() - store.get('start_time'); // Tiempo transcurrido en milisegundos
+    const diffDays = Math.floor(diff / 86400000); // Días completos transcurridos
+
+    const daysFormatted = diffDays > 0 ? diffDays + 'd ' : ''; // Añadir 'd' si hay días
+    const timeFormatted = moment.utc(diff).format('HH:mm:ss'); // Formato de horas, minutos, segundos
+
+    return daysFormatted + timeFormatted;
 }
 
 function _newPriceReset(_market, balance, price) {
@@ -121,13 +124,14 @@ async function _buy(price, amount) {
 
             orders.push(order)
             store.put('start_price', order.buy_price)
-            await _updateBalances()
+            await Promise.all([
+                _updateBalances(),
+                _calculateProfits()
+            ]);
 
             logColor(colors.green, '=============================')
             logColor(colors.green, `Bought ${order.amount} ${MARKET1} for ${parseFloat(BUY_ORDER_AMOUNT).toFixed(2)} ${MARKET2}, Price: ${order.buy_price}\n`)
             logColor(colors.green, '=============================')
-
-            await _calculateProfits()
 
             _notifyTelegram(price, 'buy')
         } else _newPriceReset(2, BUY_ORDER_AMOUNT, price)
@@ -302,14 +306,15 @@ async function _sell(price) {
                 }
 
                 store.put('start_price', _price)
-                await _updateBalances()
+                await Promise.all([
+                    _updateBalances(),
+                    _calculateProfits()
+                ]);
 
                 logColor(colors.red, '=============================')
                 logColor(colors.red,
                     `Sold ${totalAmount} ${MARKET1} for ${parseFloat(totalAmount * _price).toFixed(2)} ${MARKET2}, Price: ${_price}\n`)
                 logColor(colors.red, '=============================')
-
-                await _calculateProfits()
 
                 var i = orders.length
                 while (i--)
