@@ -6,7 +6,7 @@ const NotifyTelegram = async (data) => {
     const content = urlencode(`
 
 ${b + b + b}
-${data.from === 'buy' ? '🟢' : data.from === 'sell' ? '🔴' : '🔵'} ${Date.now()}
+${data.from === 'buy' ? '🟢' : data.from === 'sell' ? '🔴' : '🔵'} ${moment.utc(Date.now()).format('DD/MM/YYYY HH:mm:ss')}
 ${b + b + b}
 __Inicio Bot:__ ${data.start}\\
 __Duración:__ ${data.runningTime}\\
