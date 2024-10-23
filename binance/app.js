@@ -17,17 +17,22 @@ const ENTRY_PRICE_MANUAL = process.argv[7]
 const store = new Storage(`./data/${MARKET}.json`)
 const sleep = (timeMs) => new Promise(resolve => setTimeout(resolve, timeMs))
 
-function elapsedTime() {
+function elapsedTimeAndDays() {
     const startTime = new Date(store.get('start_time')); // Convertir a objeto Date
     const currentTime = new Date(); // Fecha actual
-
     const diff = currentTime - startTime; // Diferencia en milisegundos
-    const diffDays = Math.floor(diff / 86400000); // Días completos transcurridos
 
-    const daysFormatted = diffDays > 0 ? diffDays + 'd ' : ''; // Formatear días si hay
+    // Calcular tiempo
     const timeFormatted = moment.utc(diff).format('HH:mm:ss'); // Formato de horas, minutos, segundos con moment.js en UTC
 
-    return daysFormatted + timeFormatted;
+    // Calcular días
+    const diffDays = Math.floor(diff / 86400000); // Días completos transcurridos
+    const daysFormatted = diffDays > 0 ? diffDays + 'd ' : ''; // Formatear días si hay
+
+    return {
+        time: timeFormatted,
+        days: daysFormatted
+    };
 }
 
 function _newPriceReset(_market, balance, price) {
@@ -341,7 +346,8 @@ async function broadcast() {
                 const marketPrice = mPrice
 
                 console.clear()
-                log(`Running Time: ${elapsedTime()}`)
+                const resultado = elapsedTimeAndDays();
+                log(`Running Time: ${resultado.days} + ${resultado.time}`)
                 log('===========================================================')
                 const totalProfits = getRealProfits(marketPrice)
 
@@ -353,7 +359,9 @@ async function broadcast() {
                     logColor(totalProfits < 0 ? colors.red : totalProfits == 0 ? colors.gray : colors.green,
                         `Real Profits [SL = ${process.env.STOP_LOSS_BOT}%, TP = ${process.env.TAKE_PROFIT_BOT}%]: ${totalProfitsPercent}% ==> ${totalProfits <= 0 ? '' : '+'}${parseFloat(totalProfits).toFixed(3)} ${MARKET2}`)
 
-                    if (totalProfitsPercent >= parseFloat(process.env.TAKE_PROFIT_BOT)) {
+                    const orders = store.get('orders')
+
+                    if (totalProfitsPercent >= parseFloat(process.env.TAKE_PROFIT_BOT) || (parseFloat(resultado.days) > 1 && orders.length === 0)) {
                         logColor(colors.green, 'Cerrando bot en ganancias....')
                         if (process.env.SELL_ALL_ON_CLOSE) {
                             if (process.env.WITHDRAW_PROFITS
@@ -391,7 +399,6 @@ async function broadcast() {
                 log(`Entry price: ${store.get('entry_price')} ${MARKET2} (${entryPercent <= 0 ? '' : '+'}${entryPercent}%)`)
                 log('===========================================================')
 
-                const orders = store.get('orders')
                 log(`Prev price: ${startPrice} ${MARKET2}`)
                 log(`Next Buy price: ${startPrice * (100 - (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.length)))) / 100 } ${MARKET2}`)
                 log(`Percent: ${100 - (parseFloat(BS_PERCENT) * (1 + (parseFloat(INCREMENTAL_VOLATILITY) * orders.length))) / 100 }`)
