@@ -1,7 +1,7 @@
 const axios = require('axios').default
 const urlencode = require('urlencode')
 const moment = require('moment')
-const difftele = Date.now()
+const difftele = Date().toLocaleTimeString()
 const timenow = moment.utc(difftele).format('HH:mm:ss')
 
 const NotifyTelegram = async (data) => {
