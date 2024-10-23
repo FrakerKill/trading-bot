@@ -1,15 +1,13 @@
 const axios = require('axios').default
 const urlencode = require('urlencode')
 const moment = require('moment')
-const difftele = Date()
-const timenow = moment.utc(difftele).format('HH:mm:ss')
 
 const NotifyTelegram = async (data) => {
     const b = "`"
     const content = urlencode(`
 
     ${b + b + b}
-    ${data.from === 'buy' ? '🟢' : data.from === 'sell' ? '🔴' : '🔵'} ${timenow}
+    ${data.from === 'buy' ? '🟢' : data.from === 'sell' ? '🔴' : '🔵'} ${Date()}
     ${b + b + b}
 __Inicio Bot:__ ${data.start}\\
 __Duración:__ ${data.runningTime}\\
