@@ -27,7 +27,7 @@ function elapsedTimeAndDays() {
 
     // Calcular días
     const diffDays = Math.floor(diff / 86400000); // Días completos transcurridos
-    const daysFormatted = diffDays > 0 ? diffDays + 'd ' : ''; // Formatear días si hay
+    const daysFormatted = diffDays > 0 ? diffDays : '0'; // Formatear días si hay
 
     return {
         time: timeFormatted,
@@ -157,7 +157,7 @@ function _notifyTelegram(price, from) {
     if (process.env.NOTIFY_TELEGRAM
         && canNotifyTelegram(from))
         NotifyTelegram({
-            runningTime: resultado.days + resultado.time,
+            runningTime: resultado.days + 'd' + resultado.time,
             market: MARKET,
             market1: MARKET1,
             market2: MARKET2,
@@ -349,7 +349,7 @@ async function broadcast() {
 
                 console.clear()
                 const resultado = elapsedTimeAndDays();
-                log(`Running Time: ${resultado.days} ${resultado.time}`)
+                log(`Running Time: ${resultado.days} + d + ${resultado.time}`)
                 log('===========================================================')
                 const totalProfits = getRealProfits(marketPrice)
 
