@@ -361,7 +361,7 @@ async function broadcast() {
                     logColor(totalProfits < 0 ? colors.red : totalProfits == 0 ? colors.gray : colors.green,
                         `Real Profits [SL = ${process.env.STOP_LOSS_BOT}%, TP = ${process.env.TAKE_PROFIT_BOT}%]: ${totalProfitsPercent}% ==> ${totalProfits <= 0 ? '' : '+'}${parseFloat(totalProfits).toFixed(3)} ${MARKET2}`)
 
-                    if (totalProfitsPercent >= parseFloat(process.env.TAKE_PROFIT_BOT) || (parseFloat(resultado.days) > 1 && orders.length === 0)) {
+                    if (totalProfitsPercent >= parseFloat(process.env.TAKE_PROFIT_BOT) || (parseFloat(resultado.days) > parseFloat(process.env.AUTO_CLOSE_AFTER) && orders.length === 0)) {
                         logColor(colors.green, 'Cerrando bot en ganancias....')
                         if (process.env.SELL_ALL_ON_CLOSE) {
                             if (process.env.WITHDRAW_PROFITS
