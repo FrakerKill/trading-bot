@@ -1,6 +1,5 @@
 require('dotenv').config()
 const client = require('./services/client')
-
 const PAIR1 = process.argv[2] || 'BTC'
 const PAIR2 = process.argv[3] || 'USDT'
 const AMOUNT = process.argv[4] || 15
